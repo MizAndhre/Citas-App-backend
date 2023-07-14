@@ -10,9 +10,6 @@ import Usuario from "../models/Usuario.js";
 import HistorialCita from "../models/HistorialCita.js";
 
 const registrar = async (req, res) => {
-	// res.send("Desde API Veterinarios CONTROLLER"); para enviar algo a la web
-
-	// res.json({ msg: "Registrando doctor..." });
 	const { email, password } = req.body;
 
 	//Revisar si el doctor ya está registrado/existe
@@ -34,7 +31,6 @@ const registrar = async (req, res) => {
 		const doctorGuardado = await doctor.save();
 
 		//Enviar email [tentativo]
-
 		//! Enviar Notificacion al ADMIN
 		const adminUser = await Admin.findOne();
 		const unseenNotif = adminUser.unseenNotif;
@@ -51,7 +47,6 @@ const registrar = async (req, res) => {
 
 		//Enviar la información del doctor como JSON
 		res.json(doctorGuardado);
-		// console.log(doctorGuardado);
 	} catch (error) {
 		console.log("Error al registrar", error);
 	}
@@ -71,7 +66,6 @@ const login = async (req, res) => {
 	const compararPassword = await bcrypt.compare(password, doctor.password);
 	//Revisar el password
 	if (compararPassword) {
-		// console.log("enviar password", doctor);
 		res.json({
 			_id: doctor._id,
 			nombre: doctor.nombre,
@@ -93,7 +87,6 @@ const login = async (req, res) => {
 
 const perfil = (req, res) => {
 	const { doctor } = req;
-	// console.log("console", doctor);
 	res.json(doctor);
 };
 
@@ -102,10 +95,7 @@ const marcarLeidos = async (req, res) => {
 
 	try {
 		const doctor = await Doctor.findOne({ _id });
-
-		// console.log(doctor);
 		const unseenNotif = doctor.unseenNotif;
-
 		const seenNotif = doctor.seenNotif;
 
 		seenNotif.push(...unseenNotif);
@@ -128,9 +118,6 @@ const eliminarNotificaciones = async (req, res) => {
 
 	try {
 		const doctor = await Doctor.findOne({ _id });
-
-		// console.log(doctor);
-
 		// doctor.unseenNotif = [];
 		doctor.seenNotif = [];
 
@@ -138,7 +125,6 @@ const eliminarNotificaciones = async (req, res) => {
 
 		res.json({ msg: "Notificaciones eliminadas correctamente" });
 
-		// console.log(admin, "ADMIN");
 	} catch (e) {
 		const error = new Error("Error al eliminar");
 		return res.status(403).json({ msg: error.message });
@@ -180,7 +166,6 @@ const obtenerCitasSolicitud = async (req, res) => {
 
 	try {
 		const citas = await Cita.find({ doctorId: _id, estado: "pendiente" }).sort({ fecha: 1 });
-		// console.log(citas);
 
 		res.json(citas);
 	} catch (error) {
@@ -244,10 +229,8 @@ const obtenerCitasAprobadas = async (req, res) => {
 
 		// Obtener el primer día del mes
 		const primerDiaMes = new Date(fechaHoy.getFullYear(), fechaHoy.getMonth(), 1);
-
 		// Obtener el último día del mes
 		const ultimoDiaMes = new Date(fechaHoy.getFullYear(), fechaHoy.getMonth() + 1, 0);
-
 		// Filtrar las citas por el mes actual
 		const citasMes = await Cita.find({
 			fecha: {
@@ -305,7 +288,6 @@ const obtenerCitasTerminadas = async (req, res) => {
 
 	try {
 		const citas = await HistorialCita.find({ doctorId: _id }).sort({ fecha: 1 });
-		// console.log(citas);
 
 		res.json(citas);
 	} catch (error) {

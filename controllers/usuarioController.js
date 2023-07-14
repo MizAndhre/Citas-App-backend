@@ -9,9 +9,7 @@ import Usuario from "../models/Usuario.js";
 import bcrypt from "bcrypt";
 
 const registrar = async (req, res) => {
-	// res.send("Desde API Veterinarios CONTROLLER"); para enviar algo a la web
-
-	// res.json({ msg: "Registrando usuario..." });
+	
 	const { email, password } = req.body;
 
 	//Revisar si el usuario ya está registrado/existe
@@ -62,6 +60,8 @@ const login = async (req, res) => {
 			nombre: usuario.nombre,
 			email: usuario.email,
 			role: usuario.role,
+			genero: usuario.genero,
+			telefono: usuario.telefono,
 			seenNotif: usuario.seenNotif,
 			unseenNotif: usuario.unseenNotif,
 			token: generarJWT(usuario.id, usuario.role),

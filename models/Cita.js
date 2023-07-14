@@ -42,6 +42,6 @@ const citaSchema = new mongoose.Schema(
 	}
 );
 
-//registrarlo en mongoose
+//registrarlo en mongo
 const Cita = mongoose.model("Cita", citaSchema);
 export default Cita;

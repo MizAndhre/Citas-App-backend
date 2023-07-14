@@ -22,10 +22,6 @@ const doctorSchema = new mongoose.Schema(
 			required: true,
 			trim: true,
 		},
-		// disponibilidad: {
-		// 	type: Array,
-		// 	required: true,
-		// },
 		horaInicio: {
 			type: String,
 			required: true,
@@ -60,6 +56,6 @@ const doctorSchema = new mongoose.Schema(
 	}
 );
 
-//registrarlo en mongoose
+//registrarlo en mongo
 const Doctor = mongoose.model("Doctor", doctorSchema);
 export default Doctor;

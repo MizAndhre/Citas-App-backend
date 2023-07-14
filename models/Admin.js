@@ -34,6 +34,6 @@ const adminSchema = new mongoose.Schema({
 	},
 });
 
-//registrarlo en mongoose
+//registrarlo en mongoo
 const Admin = mongoose.model("Admin", adminSchema);
 export default Admin;

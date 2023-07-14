@@ -165,7 +165,6 @@ const cambiarEstadoDoctor = async (req, res) => {
 			onClickPath: "/doctor/perfil/notificacion",
 		});
 		await doctor.save();
-		// doctor.estado = "";
 
 		//Enviar NOTIF al Admin
 		const adminUser = await Admin.findOne();

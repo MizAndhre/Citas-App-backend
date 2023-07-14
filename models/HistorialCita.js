@@ -44,6 +44,6 @@ const historialCitaSchema = new mongoose.Schema(
 	}
 );
 
-//registrarlo en mongoose
+//guardarlo en mongo
 const HistorialCita = mongoose.model("HistorialCita", historialCitaSchema);
 export default HistorialCita;

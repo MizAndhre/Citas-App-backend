@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
 
-// import generarId from "../helpers/generarID.js";
-
 const usuarioSchema = new mongoose.Schema(
 	{
 		nombre: {
@@ -51,6 +49,6 @@ const usuarioSchema = new mongoose.Schema(
 	}
 );
 
-//registrarlo en mongoose
+//registrarlo en mongo
 const Usuario = mongoose.model("Usuario", usuarioSchema);
 export default Usuario;

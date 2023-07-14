@@ -1,5 +1,6 @@
 import express from "express";
 
+//se importan las funciones del archivo doctorController
 import {
 	registrar,
 	login,
@@ -21,21 +22,21 @@ const router = express.Router();
 router.post("/", registrar);
 router.post("/login", login);
 
-//Ruta Privada
+//Ruta Privada Perfil
 router.get("/perfil", checkAuth, perfil);
+router.put("/perfil/:id", checkAuth, actualizarPerfil);
 
+//Rutas notificaciones
 router.post("/marcar-leidos", checkAuth, marcarLeidos);
 router.post("/eliminar-notificaciones", checkAuth, eliminarNotificaciones);
 
-router.put("/perfil/:id", checkAuth, actualizarPerfil);
-
+//Rutas de las citas
 router.get("/obtener-citas-solicitadas/", checkAuth, obtenerCitasSolicitud);
 router.post("/cambiar-estado-citas", checkAuth, cambiarEstadoCita);
-router.get("/obtener-citas-aprobadas/", checkAuth, obtenerCitasAprobadas);
+router.get("/obtener-citas-aprobadas/", checkAuth, obtenerCitasAprobadas);       
 router.post("/cambiar-estado-citas-aprobadas", checkAuth, cambiarEstadoCitaAprobadas);
 
-router.get("/obtener-citas-aprobadas-semana/", checkAuth, obtenerCitasAprobadas);
-
+//Ruta historial de cita
 router.get("/obtener-citas-terminadas/", checkAuth, obtenerCitasTerminadas);
 
 export default router;
