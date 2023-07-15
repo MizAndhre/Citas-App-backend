@@ -13,6 +13,7 @@ import conectarDB from "./config/db.js";
 import usuarioRoutes from "./routes/usuarioRoutes.js";
 import doctorRoutes from "./routes/doctorRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import apkRoutes from "./routes/apkRoutes.js";
 
 //2. Funcionalidad para crear el servidor
 //3. Llamar e iniciar express
@@ -45,6 +46,7 @@ app.use(cors(corsOptions));
 app.use("/api/usuarios", usuarioRoutes);
 app.use("/api/doctores", doctorRoutes);
 app.use("/api/admins", adminRoutes);
+app.use("/api/apk", apkRoutes);
 
 //4. Puerto a escuchar para hacer peticiones/funcionar
 //Este port se agrega al .env
