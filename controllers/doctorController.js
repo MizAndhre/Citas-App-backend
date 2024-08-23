@@ -66,6 +66,7 @@ const login = async (req, res) => {
 	const compararPassword = await bcrypt.compare(password, doctor.password);
 	//Revisar el password
 	if (compararPassword) {
+		// Enviar la info del usuario como respuesta para guardarla en el frontend
 		res.json({
 			_id: doctor._id,
 			nombre: doctor.nombre,
@@ -124,7 +125,6 @@ const eliminarNotificaciones = async (req, res) => {
 		const actualizarDoctor = await doctor.save();
 
 		res.json({ msg: "Notificaciones eliminadas correctamente" });
-
 	} catch (e) {
 		const error = new Error("Error al eliminar");
 		return res.status(403).json({ msg: error.message });
@@ -165,8 +165,9 @@ const obtenerCitasSolicitud = async (req, res) => {
 	const { _id } = req.doctor;
 
 	try {
+		// Buscar las citas con el ID del doctor y el estado de "pendiente"
 		const citas = await Cita.find({ doctorId: _id, estado: "pendiente" }).sort({ fecha: 1 });
-
+		// Enviar como respuesta del objeto de citas
 		res.json(citas);
 	} catch (error) {
 		console.log("Error al obtener citas", error);
@@ -175,12 +176,13 @@ const obtenerCitasSolicitud = async (req, res) => {
 
 const cambiarEstadoCita = async (req, res) => {
 	try {
+		// Recibe el ID de la cita y el estado a cambiar
 		const { _id, estado } = req.body;
+		// Busca la cita y actualiza el estado
 		const cita = await Cita.findByIdAndUpdate(_id, {
 			estado,
 		});
 
-		console.log(cita);
 		// Enviar NOTIF al Paciente sobre la cuenta
 		const paciente = await Usuario.findOne({ _id: cita.usuarioId });
 		const unseenNotif = paciente.unseenNotif;
@@ -190,7 +192,7 @@ const cambiarEstadoCita = async (req, res) => {
 			onClickPath: "/paciente/perfil/ver-citas",
 		});
 		await paciente.save();
-
+		// Envia mensaje de exito
 		res.json({ msg: "Cita actualizada correctamente" });
 	} catch (error) {
 		const e = new Error("Error al cambiar el estado de la cita");
@@ -248,11 +250,14 @@ const obtenerCitasAprobadas = async (req, res) => {
 
 const cambiarEstadoCitaAprobadas = async (req, res) => {
 	try {
+		// Obtiene el ID dela cita y el Estado a cambiar
 		const { _id, estado } = req.body;
+		//  Busca la cita y actualiza el estado
 		const cita = await Cita.findByIdAndUpdate(_id, {
 			estado,
 		});
 
+		// Como ya fue aprobada, crea una instancia en la BD HistorialCita
 		const historial = new HistorialCita({
 			citaId: _id,
 			usuarioId: cita.usuarioId,
@@ -266,7 +271,7 @@ const cambiarEstadoCitaAprobadas = async (req, res) => {
 		});
 		await historial.save();
 
-		// Enviar NOTIF al Paciente sobre la cuenta
+		// Enviar NOTIF al Paciente sobre el cambio de esta de la cita
 		const paciente = await Usuario.findOne({ _id: cita.usuarioId });
 		const unseenNotif = paciente.unseenNotif;
 		unseenNotif.push({
@@ -275,7 +280,7 @@ const cambiarEstadoCitaAprobadas = async (req, res) => {
 			onClickPath: "/paciente/perfil/historial-citas",
 		});
 		await paciente.save();
-
+		// Enviar al frontend un mensaje de exito
 		res.json({ msg: "Cita actualizada correctamente" });
 	} catch (error) {
 		const e = new Error("Error al cambiar el estado de la cita");

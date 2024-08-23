@@ -9,7 +9,6 @@ import Usuario from "../models/Usuario.js";
 import bcrypt from "bcrypt";
 
 const registrar = async (req, res) => {
-	
 	const { email, password } = req.body;
 
 	//Revisar si el usuario ya está registrado/existe
@@ -54,7 +53,7 @@ const login = async (req, res) => {
 	const compararPassword = await bcrypt.compare(password, usuario.password);
 	//Revisar el password
 	if (compararPassword) {
-		// console.log("enviar password", usuario);
+		// Enviar la info del usuario como respuesta para guardarla en el frontend
 		res.json({
 			_id: usuario._id,
 			nombre: usuario.nombre,
@@ -151,7 +150,7 @@ const obtenerDoctoresAprobados = async (req, res) => {
 		const doctores = await Doctor.find({ estado: "aprobada" }).select(
 			"-password -__v -token -unseenNotif -seenNotif"
 		);
-		// console.log(doctores);
+		console.log(doctores);
 		res.json(doctores);
 	} catch (error) {
 		console.log("Error al obtener doctores", error);
@@ -177,34 +176,32 @@ const comprobarCita = async (req, res) => {
 
 	try {
 		const setHora = new Date(hora);
-		console.log("sethora ", setHora);
 
 		// Crear un nuevo objeto Date
 		const desdeHora = new Date(setHora.getTime());
-		// Sumar una hora a la fecha
+		// Sumar 30 min a la fecha
 		desdeHora.setMinutes(desdeHora.getMinutes() - 29);
-		console.log("desde Hora", desdeHora);
 
 		// Crear un nuevo objeto Date
 		const hastaHora = new Date(setHora.getTime());
-		// Restar una hora a la fecha
+		// Restar 30 min a la fecha
 		hastaHora.setMinutes(hastaHora.getMinutes() + 29);
-		console.log(hastaHora);
 
+		// Buscar en la BD si ya hay una cita en esa fecha y hora, con ese dr en especifico
 		const citas = await Cita.find({
 			doctorId,
 			fecha,
 			hora: { $gte: desdeHora, $lte: hastaHora },
 		});
-
+		// Si ya hay una cita, envia un mensaje de error
 		if (citas.length > 0) {
 			const error = new Error("Cita no disponible");
 			return res.status(400).json({ msg: error.message });
 		}
-
+		// Si no hay cita, envia un mensaje de exito
 		return res.status(200).json({ msg: "Cita disponible" });
 	} catch (error) {
-		console.log("Error al comprobar disponibildiad de cita", error);
+		console.log("Error al comprobar disponibilidad de cita", error);
 	}
 };
 
@@ -233,13 +230,16 @@ const programarCita = async (req, res) => {
 };
 
 const obtenerCitas = async (req, res) => {
+	// busca al paciente por su id
 	const { _id } = req.usuario;
 	const estados = ["pendiente", "aceptada", "rechazada"];
 
 	try {
+		// busca en la BD de citas, la citas de ese paciente y los devuelve en orden cronologico con .sort
 		const citas = await Cita.find({ usuarioId: _id, estado: { $in: estados } }).sort({
 			fecha: 1,
 		});
+		// se envia el objeto de citas como respuesta
 		res.json(citas);
 	} catch (error) {
 		console.log("Error al obtener citas", error);
@@ -248,9 +248,11 @@ const obtenerCitas = async (req, res) => {
 
 const eliminarCita = async (req, res) => {
 	try {
+		// buscar la cita seleccionadapor el ID
 		const { _id } = req.body;
+		// una vez se encuentra, se elimina
 		const cita = await Cita.findOneAndDelete({ _id });
-
+		// mensaje de exito
 		res.json({ msg: "Cita eliminada correctamente" });
 	} catch (error) {
 		const e = new Error("Error al cambiar el estado de la cita");
@@ -260,11 +262,16 @@ const eliminarCita = async (req, res) => {
 
 const cancelarCitaAprobada = async (req, res) => {
 	try {
+		// se obtiene el ID  de la cita
+		// y el Estado a actualizar
 		const { _id, estado } = req.body;
+		// Se busca la cita en la BD de datos
+		// Se actualiza el estado
 		const cita = await Cita.findByIdAndUpdate(_id, {
 			estado,
 		});
 
+		// Como ya fue aprobada, esta cita pasa al historial
 		const historial = new HistorialCita({
 			citaId: _id,
 			usuarioId: cita.usuarioId,
@@ -278,7 +285,7 @@ const cancelarCitaAprobada = async (req, res) => {
 		});
 		await historial.save();
 
-		// Enviar NOTIF al Paciente sobre la cuenta
+		// Enviar NOTIF al Doctor sobre la cita cancelada
 		const doctor = await Doctor.findOne({ _id: cita.doctorId });
 		const unseenNotif = doctor.unseenNotif;
 		unseenNotif.push({
@@ -300,8 +307,6 @@ const obtenerHistorialCitas = async (req, res) => {
 
 	try {
 		const citas = await Cita.find({ usuarioId: _id }).sort({ fecha: 1 });
-		// console.log(citas);
-		// console.log(doctor);
 		res.json(citas);
 	} catch (error) {
 		console.log("Error al obtener citas", error);
@@ -312,9 +317,9 @@ const obtenerCitasTerminadas = async (req, res) => {
 	const { _id } = req.usuario;
 
 	try {
+		// Se obtienen las citas de la BD HistorialCita por el ID del usuario
 		const citas = await HistorialCita.find({ usuarioId: _id }).sort({ fecha: 1 });
-		// console.log(citas);
-
+		//  la respuesta es el objeto con las citas encontradas
 		res.json(citas);
 	} catch (error) {
 		console.log("Error al obtener citas", error);
@@ -335,6 +340,5 @@ export {
 	obtenerCitas,
 	eliminarCita,
 	cancelarCitaAprobada,
-	obtenerHistorialCitas,
 	obtenerCitasTerminadas,
 };

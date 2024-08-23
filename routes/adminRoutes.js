@@ -35,4 +35,7 @@ router.post("/cambiar-estado-doctores", checkAuth, cambiarEstadoDoctor);
 //Ruta hisotorial de citas
 router.get("/obtener-citas-terminadas/", checkAuth, obtenerCitasTerminadas);
 
+//Ruta APK
+router.get("/obtener-doctores-apk", obtenerDoctores);
+
 export default router;

@@ -140,10 +140,11 @@ const obtenerPacientes = async (req, res) => {
 
 const obtenerDoctores = async (req, res) => {
 	try {
+		// Buscar todos los doctores de la BD Doctor
 		const doctores = await Doctor.find({}).select(
 			"-password -__v -token -unseenNotif -seenNotif"
 		);
-		// console.log(doctores);
+		// Envia el objeto de doctores como respuesta
 		res.json(doctores);
 	} catch (error) {
 		console.log("Error al obtener doctores", error);
@@ -152,7 +153,9 @@ const obtenerDoctores = async (req, res) => {
 
 const cambiarEstadoDoctor = async (req, res) => {
 	try {
+		// Obtener el ID del doctor y el Estado a cambiar
 		const { doctorId, estado } = req.body;
+		// Buscar el doctor en la BD y actualizar el estado
 		const doctor = await Doctor.findByIdAndUpdate(doctorId, {
 			estado,
 		});
@@ -175,7 +178,7 @@ const cambiarEstadoDoctor = async (req, res) => {
 			onClickPath: "/admin/perfil/lista-doctores",
 		});
 		await adminUser.save();
-
+		// Enviar mensaje de exito
 		res.json({ msg: "Estado del doctor cambiado correctamente" });
 	} catch (error) {
 		const e = new Error("Error al cambiar el estado del doctor");
@@ -184,11 +187,10 @@ const cambiarEstadoDoctor = async (req, res) => {
 };
 
 const obtenerCitasTerminadas = async (req, res) => {
-	// const { _id } = req.doctor;
-
 	try {
+		// Obtener todas las citas de la BD de
 		const citas = await HistorialCita.find().sort({ fecha: 1 });
-
+		// Envia el objeto de citas como respuesta
 		res.json(citas);
 	} catch (error) {
 		console.log("Error al obtener citas", error);

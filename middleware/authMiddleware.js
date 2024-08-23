@@ -6,14 +6,16 @@ import Admin from "../models/Admin.js";
 const checkAuth = async (req, res, next) => {
 	let token;
 
+	// toma los headers de la request que se hacer
+	// si existe el header de authorization y si empieza con "Bearer" continua la funcion
 	if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
 		try {
 			token = req.headers.authorization.split(" ")[1];
-
+			// Decodifica el token y lo asigna a la variable decoded
 			const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-			// console.log(decoded);
-
+			// determina que usuario es por el role
+			// y crea un parametro segun usuario en el request
 			if (decoded.role === "usuario") {
 				req.usuario = await Usuario.findById(decoded.id).select("-password -token");
 			} else if (decoded.role === "doctor") {
@@ -21,7 +23,7 @@ const checkAuth = async (req, res, next) => {
 			} else if (decoded.role === "admin") {
 				req.admin = await Admin.findById(decoded.id).select("-password -token");
 			}
-			// console.log("Paso Auth");
+			// Pasa al siguiente middleware, es decir la siguiente funcion
 			return next();
 		} catch (error) {
 			const e = new Error("Token no válido");

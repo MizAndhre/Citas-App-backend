@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 //1. Funcion async para esperar la conexión a la BD
 
 const conectarDB = async () => {
-	//Try/Catch por si hay erro en la conexion
+	//Try/Catch por si hay error en la conexion
 	try {
 		//connect metodo de mongoose para conectarse a BD
 		const db = await mongoose.connect(process.env.MONGO_URI, {
