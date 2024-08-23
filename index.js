@@ -27,17 +27,17 @@ app.use(express.json());
 conectarDB();
 
 //dominios permitidos ==> CORS
-// const dominiosPermitidos = [process.env.FRONTEND_URL];
-// const corsOptions = {
-// 	origin: function (origin, callback) {
-// 		if (dominiosPermitidos.indexOf(origin) !== -1) {
-// 			callback(null, true);
-// 		} else {
-// 			callback(new Error("No permitido por CORS"));
-// 		}
-// 	},
-// };
-// app.use(cors(corsOptions));
+const dominiosPermitidos = [process.env.FRONTEND_URL];
+const corsOptions = {
+	origin: function (origin, callback) {
+		if (dominiosPermitidos.indexOf(origin) !== -1) {
+			callback(null, true);
+		} else {
+			callback(new Error('No permitido por CORS'));
+		}
+	},
+};
+app.use(cors(corsOptions));
 
 // Crear las rutas API
 app.use('/api/usuarios', usuarioRoutes);
